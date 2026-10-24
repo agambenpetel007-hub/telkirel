@@ -1,0 +1,122 @@
+
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TEL KIREL 🦄</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#fff0f8;color:#873d70}
+header{text-align:center;background:white;padding:22px}
+h1{color:#e34f9c;font-size:34px;margin:0}
+button{border:0;border-radius:20px;background:#f5b3d5;color:#78335f;padding:12px 17px;font-size:15px;font-weight:bold;margin:4px}
+main{max-width:750px;margin:auto;padding:12px}
+.card{background:white;border:2px solid #f7d2e6;border-radius:22px;padding:16px;margin:12px 0}
+h2{color:#d94d98}
+#map{width:100%;background:#fff7fc;border-radius:20px}
+input{width:100%;padding:13px;border:1px solid #edbed9;border-radius:12px;font-size:16px;margin:7px 0 14px}
+.small{font-size:13px;line-height:1.6}
+#certificate{display:none;text-align:center;border:4px double #df7db1;border-radius:18px;padding:20px}
+#certificate h2{font-size:28px}
+</style>
+</head>
+<body>
+<header>
+<h1>🦄 TEL KIREL 🩷</h1>
+<p>עיר המעריצים הקסומה של נועה קירל</p>
+</header>
+<main>
+<section class="card">
+<h2>ברוכים הבאים לעיר! ✨</h2>
+<p>עיר קסומה בצורת חד־קרן, עם רחובות ובתים למעריצים.</p>
+<svg id="map" viewBox="0 0 340 350">
+<defs>
+<linearGradient id="mane" x1="0" y1="0" x2="1" y2="1">
+<stop stop-color="#f5a3d0"/><stop offset=".5" stop-color="#cbb0f2"/><stop offset="1" stop-color="#fff0a6"/>
+</linearGradient>
+</defs>
+<path d="M65 135 L30 55 L95 100 L130 35 L155 100 Q215 70 260 115 L315 85 L298 150 Q325 195 295 230 L280 275 L230 315 L180 305 L140 335 L120 300 L80 290 L50 250 L35 215 L65 195 Z" fill="#f8d9eb" stroke="#e7a4cb" stroke-width="3"/>
+<path d="M130 35 L155 100 Q190 75 220 95 L190 130 L155 140 L95 100 Z" fill="url(#mane)"/>
+<path d="M130 35 L140 5 L155 100 Z" fill="#ffe9a3" stroke="#e7a4cb" stroke-width="2"/>
+<path d="M65 135 L30 55 L95 100 Z" fill="#f4b9db" stroke="#e7a4cb" stroke-width="2"/>
+<path d="M75 155 Q170 190 270 145 M75 225 Q170 190 270 145 M75 225 Q165 270 270 230 M170 190 L200 295" fill="none" stroke="white" stroke-width="13" stroke-linecap="round"/>
+<g font-size="12" fill="#934776" font-weight="bold" text-anchor="middle">
+<text x="170" y="170">שדרת פנתרה</text>
+<text x="220" y="210">רחוב מיליון דולר</text>
+<text x="165" y="260">רחוב טרילילי</text>
+</g>
+<g id="houses"></g>
+<g transform="translate(235 145)">
+<ellipse cx="0" cy="0" rx="5" ry="7" fill="#934776"/>
+<path d="M-10 -12 Q0 -22 10 -12" fill="none" stroke="#934776" stroke-width="2"/>
+</g>
+</svg>
+<p class="small">לחצו על אחד הבתים כדי לגלות עליו עוד 🏡</p>
+<div id="houseInfo"></div>
+</section>
+
+<section class="card">
+<h2>הצטרפות לתל קירל 🎀</h2>
+<p class="small">גרסת ניסיון: הפרטים נשמרים בדפדפן הזה בלבד, ולא משותפים עם תושבים אחרים.</p>
+<label for="fanName">שם לתעודת התושב</label>
+<input id="fanName" maxlength="24" placeholder="השם שלך">
+<label for="song">שיר נועה האהוב עלייך</label>
+<input id="song" maxlength="40" placeholder="שם השיר">
+<button onclick="register()">יצירת תעודת תושב 💗</button>
+<p id="status" class="small"></p>
+</section>
+
+<section class="card">
+<h2>התעודה שלי 🦄</h2>
+<div id="certificate">
+<div style="font-size:38px">🦄 💗 ✨</div>
+<h2>תעודת תושבות</h2>
+<p>ברוכים הבאים לתל קירל</p>
+<h3 id="certName"></h3>
+<p id="certId"></p>
+<p id="certAddress"></p>
+<p id="certSong"></p>
+<p>עיר המעריצים של נועה קירל</p>
+<button onclick="window.print()">שמירה / הדפסה</button>
+</div>
+<p id="empty">אחרי יצירת התעודה היא תופיע כאן.</p>
+</section>
+</main>
+<script>
+const places=[
+{x:100,y:175,c:'#f5a3cf',n:'בית 001'},
+{x:195,y:175,c:'#c6aff0',n:'בית 002'},
+{x:125,y:235,c:'#f4c4a5',n:'בית 003'},
+{x:240,y:235,c:'#f5a3cf',n:'בית 004'}
+];
+const svgNS='http://www.w3.org/2000/svg';
+const houses=document.getElementById('houses');
+places.forEach(p=>{
+const g=document.createElementNS(svgNS,'g');
+g.setAttribute('transform',`translate(${p.x} ${p.y})`);
+g.style.cursor='pointer';
+g.innerHTML=`<path d="M-13 -1 L0 -13 L13 -1 V15 H-13 Z" fill="${p.c}" stroke="white" stroke-width="2"/><rect x="-4" y="5" width="8" height="10" fill="white"/>`;
+g.addEventListener('click',()=>{
+document.getElementById('houseInfo').textContent=p.n+' — בית לדוגמה בעיר!';
+});
+houses.appendChild(g);
+});
+function register(){
+const name=document.getElementById('fanName').value.trim();
+const song=document.getElementById('song').value.trim();
+const status=document.getElementById('status');
+if(!name){status.textContent='כתבי שם לפני יצירת התעודה 💗';return}
+const user={name,song,id:'TK-'+Math.floor(100000+Math.random()*900000),house:Math.floor(Math.random()*400)+1};
+try{localStorage.setItem('telkirel-demo',JSON.stringify(user))}catch(e){}
+document.getElementById('certName').textContent=name;
+document.getElementById('certId').textContent='מספר תושב: '+user.id;
+document.getElementById('certAddress').textContent='כתובת: שדרת נועה, בית '+user.house;
+document.getElementById('certSong').textContent=song?'השיר האהוב: '+song:'';
+document.getElementById('certificate').style.display='block';
+document.getElementById('empty').style.display='none';
+status.textContent='תעודת ההדגמה שלך מוכנה! 🎀';
+}
+</script>
+</body>
+</html>
